@@ -1,2 +1,46 @@
 @charset "UTF-8";
 
+@mixin rotate($angle) {
+	-webkit-transform: rotate($angle);
+	-moz-transform: rotate($angle);
+	-ms-transform: rotate($angle);
+	-o-transform: rotate($angle);
+}
+
+.post.type-product {
+	position: relative;
+
+	.onsale {
+		background: none;
+		box-shadow: none;
+		text: {
+			align: center;
+			shadow: 0 0 8px rgba(0,0,0,1);
+		}
+
+
+		@include rotate(-20deg);
+		
+		&:before,
+			&:after {
+				background-color: #f00;
+				content: "";
+				margin-left: -16px;
+				margin-top: -16px;
+				width: 32px;
+				height: 32px;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				z-index: -1;
+			}
+
+		&:before {
+			@include rotate(10deg);
+		}
+
+		&:after {
+			@include rotate(145deg);
+		}
+	}
+}
