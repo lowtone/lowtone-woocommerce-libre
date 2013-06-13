@@ -29,11 +29,16 @@ namespace lowtone\woocommerce\libre {
 	// Init
 
 	Package::init(array(
-			Package::INIT_PACKAGES => array("lowtone", "lowtone\\woocommerce"),
+			Package::INIT_PACKAGES => array("lowtone", "lowtone\\woocommerce", "lowtone\\style"),
 			Package::INIT_MERGED_PATH => __NAMESPACE__,
 			Package::INIT_SUCCESS => function() {
+				if (!checkLibre())
+					return false;
+
+				add_theme_support("woocommerce");
 
 				add_action("init", function() {
+
 					if (!checkWooCommerce())
 						return;
 
@@ -65,7 +70,7 @@ namespace lowtone\woocommerce\libre {
 					if (LOWTONE_WOOCOMMERCE_LIBRE_APPEND_TEMPLATE) {
 
 						add_filter("libre_append_templates", function($templates, $template) {
-							$templates[] = __DIR__ . "/assets/templates/index.xsl";
+							$templates[] = template();
 
 							return $templates;
 						}, 10, 2);
@@ -76,23 +81,13 @@ namespace lowtone\woocommerce\libre {
 					
 					if (LOWTONE_WOOCOMMERCE_LIBRE_INCLUDE_STYLES) {
 
-						$stylesheet = NULL;
+						$stylesheet = stylesheet();
 
-						$path = "styles/woocommerce.css";
+						$deps = array(
+								"lowtone_style_grid",
+							);
 
-						foreach (array(get_stylesheet_directory(), get_template_directory()) as $i => $dir) {
-							if (!is_file($dir . DIRECTORY_SEPARATOR . $path))
-								continue;
-							
-							$stylesheet = (0 == $i ? get_stylesheet_directory_uri() : get_template_directory_uri()) . "/" . $path;
-							
-							break;
-						}
-
-						if (!$stylesheet)
-							$stylesheet = plugins_url("/assets/" . $path, __FILE__);
-
-						wp_enqueue_style("lowtone_woocommerce_libre", $stylesheet, array("woocommerce_frontend_styles"));
+						wp_enqueue_style("lowtone_woocommerce_libre", $stylesheet, $deps);
 
 					}
 
@@ -102,9 +97,41 @@ namespace lowtone\woocommerce\libre {
 		));
 
 	// Functions
+	
+	function checkLibre() {
+		return get_option("template") == "lowtone-libre";
+	}
 
 	function checkWooCommerce() {
 		return class_exists("Woocommerce");
+	}
+
+	/**
+	 * Locate the WooCommerce Libre template.
+	 * @return string Returns the path to the template.
+	 */
+	function template() {
+		foreach (array(get_stylesheet_directory(), get_template_directory()) as $dir) {
+			if (!is_file($template = $dir . "/woocommerce/libre/index.xsl"))
+				continue;
+
+			return $template;
+		}
+
+		return __DIR__ . "/assets/templates/index.xsl";
+	}
+
+	function stylesheet() {
+		$path = "styles/woocommerce.css";
+
+		foreach (array(get_stylesheet_directory(), get_template_directory()) as $i => $dir) {
+			if (!is_file($dir . DIRECTORY_SEPARATOR . $path))
+				continue;
+			
+			return (0 == $i ? get_stylesheet_directory_uri() : get_template_directory_uri()) . "/" . $path;
+		}
+
+		return plugins_url("/assets/" . $path, __FILE__);
 	}
 
 }

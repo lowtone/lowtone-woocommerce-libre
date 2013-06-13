@@ -1,10 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 	@author Paul van der Meijs <code@paulvandermeijs.nl>
-	@copyright Copyright (c) 2012, Paul van der Meijs
+	@copyright Copyright (c) 2012-2013, Paul van der Meijs
 	@version 1.0
  -->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:wc="http://wordpress.lowtone.nl/woocommerce">
+	
+	<!-- Products -->
+	
+	<xsl:template match="//query[query_vars/post_type = 'product']/posts">
+		<xsl:variable name="hasPosts" select="boolean(count(post))" />
+		<xsl:variable name="single" select="boolean(//query/@single)" />
+
+		<div class="one-whole column alpha omega">
+			<xsl:choose>
+				<xsl:when test="$single">
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="wc:woocommerce/actions/before_shop_loop" disable-output-escaping="yes" />
+				</xsl:otherwise>
+			</xsl:choose>
+		</div>
+		
+		<div>
+			<xsl:attribute name="class">
+				<xsl:text>posts</xsl:text>
+				<xsl:if test="not($hasPosts)">
+					<xsl:text> empty</xsl:text>
+				</xsl:if>
+				<xsl:text> one-whole column alpha omega</xsl:text>
+			</xsl:attribute>
+			
+			<xsl:choose>
+				<xsl:when test="$hasPosts">
+					<xsl:choose>
+						<xsl:when test="$single">
+							<xsl:apply-templates select="post" mode="single" />
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:apply-templates select="post" />
+						</xsl:otherwise>
+					</xsl:choose>
+				</xsl:when>
+				<xsl:otherwise>
+					<p class="no-items"><xsl:value-of select="locales/no_posts" /></p>
+				</xsl:otherwise>
+			</xsl:choose>
+		</div>
+
+		<div class="one-whole column alpha omega">
+			<xsl:choose>
+				<xsl:when test="$single">
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="wc:woocommerce/actions/after_shop_loop" disable-output-escaping="yes" />
+				</xsl:otherwise>
+			</xsl:choose>
+		</div>
+	</xsl:template>
 
 
 	<!-- Product -->
@@ -15,6 +68,7 @@
 		<article id="{name}" itemscope="itemscope" itemtype="http://schema.org/Product">
 			<xsl:attribute name="class">
 				<xsl:text>post type-</xsl:text><xsl:value-of select="type" />
+				<xsl:text> </xsl:text><xsl:value-of select="../wc:woocommerce/product_class" />
 
 				<xsl:if test="0 = position()-1 mod number(../wc:woocommerce/columns)">
 					<xsl:text> first</xsl:text>
@@ -30,7 +84,7 @@
 			<a href="{permalink}">
 				<xsl:value-of select="wc:woocommerce/actions/before_shop_loop_item_title" disable-output-escaping="yes" />
 
-				<h3><xsl:value-of select="title" /></h3>
+				<h3><xsl:value-of select="title" disable-output-escaping="yes" /></h3>
 
 				<xsl:value-of select="wc:woocommerce/actions/after_shop_loop_item_title" disable-output-escaping="yes" />
 			</a>

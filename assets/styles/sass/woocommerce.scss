@@ -46,8 +46,9 @@
 
 	.archive & {
 		float: left;
+		margin-bottom: 1em;
 
-		&.first {
+		&.last + .post.type-product {
 			clear: left;
 		}
 	}
