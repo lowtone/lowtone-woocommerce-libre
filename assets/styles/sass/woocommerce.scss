@@ -43,4 +43,12 @@
 			@include rotate(145deg);
 		}
 	}
+
+	.archive & {
+		float: left;
+
+		&.first {
+			clear: left;
+		}
+	}
 }

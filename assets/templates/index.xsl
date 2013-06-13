@@ -12,7 +12,18 @@
 	<xsl:template match="post[type='product']">
 		<xsl:param name="single" />
 		
-		<article id="{name}" itemscope="itemscope" itemtype="http://schema.org/Product" class="post type-{type}">
+		<article id="{name}" itemscope="itemscope" itemtype="http://schema.org/Product">
+			<xsl:attribute name="class">
+				<xsl:text>post type-</xsl:text><xsl:value-of select="type" />
+
+				<xsl:if test="0 = position()-1 mod number(../wc:woocommerce/columns)">
+					<xsl:text> first</xsl:text>
+				</xsl:if>
+
+				<xsl:if test="0 = position() mod number(../wc:woocommerce/columns)">
+					<xsl:text> last</xsl:text>
+				</xsl:if>
+			</xsl:attribute>
 
 			<xsl:value-of select="wc:woocommerce/actions/before_shop_loop_item" disable-output-escaping="yes" />
 
