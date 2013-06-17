@@ -50,20 +50,13 @@ namespace lowtone\woocommerce\libre {
 					if (!defined("LOWTONE_WOOCOMMERCE_LIBRE_INCLUDE_STYLES"))
 						define("LOWTONE_WOOCOMMERCE_LIBRE_INCLUDE_STYLES", true);
 
+					// Disable redirect
+
 					remove_filter("template_include", array($GLOBALS["woocommerce"], "template_loader"));
 
-					add_filter("post_document_content", function($content) {
-						if (!(is_single() && get_post_type() == "product"))
-							return $content;
+					// Disable WooCommerce pagination
 
-						return Util::catchOutput(function() {
-							while (have_posts()) {
-								the_post();
-
-								woocommerce_get_template_part("content", "single-product");
-							}
-						});
-					});
+					remove_action("woocommerce_after_shop_loop", "woocommerce_pagination");
 
 					// Append template
 
