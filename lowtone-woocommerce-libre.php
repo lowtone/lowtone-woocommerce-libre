@@ -1,6 +1,6 @@
 <?php
 /*
- * Plugin Name: WooCommerce Libre support
+ * Plugin Name: WooCommerce support for Libre
  * Plugin URI: http://wordpress.lowtone.nl/plugins/woocommerce-libre/
  * Description: Add WooCommerce support to the Libre theme.
  * Version: 1.0
