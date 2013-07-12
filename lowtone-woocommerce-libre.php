@@ -86,6 +86,35 @@ namespace lowtone\woocommerce\libre {
 
 				});
 
+				add_filter("libre_sidebar_meta", function($meta) {
+					$meta["woocommerce_catalog"] = array(
+							"woocommerce_catalog_sidebars", 
+							"WooCommerce Catalog Sidebars", 
+							__("WooCommerce Catalog", "lowtone_woocommerce_libre"), 
+							__("This sidebar is displayed on the WooCommerce catalog page.", "lowtone_woocommerce_libre")
+						);
+					
+					$meta["woocommerce_product"] = array(
+							"woocommerce_product_sidebars", 
+							"WooCommerce Product Sidebars", 
+							__("WooCommerce Product", "lowtone_woocommerce_libre"), 
+							__("This sidebar is displayed on the WooCommerce product page.", "lowtone_woocommerce_libre")
+						);
+
+					return $meta;
+				});
+
+				add_filter("libre_sidebars", function($sidebars) {
+					global $wp_query;
+
+					if ("product" != $wp_query->get("post_type"))
+						return $sidebars;
+
+					$sidebars[] = is_singular() ? "woocommerce_product" : "woocommerce_catalog";
+					
+					return $sidebars;
+				});
+
 			}
 		));
 

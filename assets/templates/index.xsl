@@ -13,6 +13,12 @@
 		<xsl:variable name="single" select="boolean(//query/@single)" />
 
 		<div class="one-whole column alpha omega">
+			<xsl:value-of select="wc:woocommerce/actions/before_main_content" disable-output-escaping="yes" />
+
+			<xsl:if test="not($single)">
+				<xsl:apply-templates select="wc:woocommerce/page_title" />
+			</xsl:if>
+
 			<xsl:choose>
 				<xsl:when test="$single">
 				</xsl:when>
@@ -24,7 +30,7 @@
 		
 		<div>
 			<xsl:attribute name="class">
-				<xsl:text>posts</xsl:text>
+				<xsl:text>posts products</xsl:text>
 				<xsl:if test="not($hasPosts)">
 					<xsl:text> empty</xsl:text>
 				</xsl:if>
@@ -56,7 +62,16 @@
 					<xsl:value-of select="wc:woocommerce/actions/after_shop_loop" disable-output-escaping="yes" />
 				</xsl:otherwise>
 			</xsl:choose>
+
+			<xsl:value-of select="wc:woocommerce/actions/after_main_content" disable-output-escaping="yes" />
 		</div>
+	</xsl:template>
+
+
+	<!-- Page title -->
+
+	<xsl:template match="wc:woocommerce/page_title">
+		<h1 class="page-title"><xsl:value-of select="." /></h1>
 	</xsl:template>
 
 
@@ -70,7 +85,7 @@
 				<xsl:text>post type-</xsl:text><xsl:value-of select="type" />
 				<xsl:text> </xsl:text><xsl:value-of select="../wc:woocommerce/product_class" />
 
-				<xsl:if test="0 = position()-1 mod number(../wc:woocommerce/columns)">
+				<xsl:if test="0 = (position()-1) mod number(../wc:woocommerce/columns)">
 					<xsl:text> first</xsl:text>
 				</xsl:if>
 
@@ -78,7 +93,7 @@
 					<xsl:text> last</xsl:text>
 				</xsl:if>
 			</xsl:attribute>
-
+			
 			<xsl:value-of select="wc:woocommerce/actions/before_shop_loop_item" disable-output-escaping="yes" />
 
 			<a href="{permalink}">
@@ -91,6 +106,10 @@
 
 			<xsl:value-of select="wc:woocommerce/actions/after_shop_loop_item" disable-output-escaping="yes" />
 		</article>
+
+		<xsl:if test="0 = position() mod number(../wc:woocommerce/columns)">
+			<xsl:call-template name="separator" />
+		</xsl:if>
 	</xsl:template>
 
 
@@ -116,6 +135,38 @@
 		</article>
 
 		<xsl:value-of select="wc:woocommerce/actions/after_single_product" disable-output-escaping="yes" />
+	</xsl:template>
+
+
+	<!-- Separator -->
+
+	<xsl:template name="separator">
+		<div class="separator"></div>
+	</xsl:template>
+
+
+	<!-- Side -->
+
+	<xsl:template name="woocommerce_side">
+		<xsl:param name="width">one-third</xsl:param>
+
+		<xsl:choose>
+			<xsl:when test="count(sidebars/sidebar[@id='woocommerce_product']/widgets/widget) &gt; 0">
+				<xsl:apply-templates select="sidebars/sidebar[@id='woocommerce_product']">
+					<xsl:with-param name="width" select="$width" />
+				</xsl:apply-templates>
+			</xsl:when>
+			<xsl:when test="count(sidebars/sidebar[@id='woocommerce_catalog']/widgets/widget) &gt; 0">
+				<xsl:apply-templates select="sidebars/sidebar[@id='woocommerce_catalog']">
+					<xsl:with-param name="width" select="$width" />
+				</xsl:apply-templates>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:call-template name="side">
+					<xsl:with-param name="width" select="$width" />
+				</xsl:call-template>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 </xsl:stylesheet>
