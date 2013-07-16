@@ -107,8 +107,10 @@ namespace lowtone\woocommerce\libre {
 				add_filter("libre_sidebars", function($sidebars) {
 					global $wp_query;
 
-					if ("product" != $wp_query->get("post_type"))
-						return $sidebars;
+					if (!("product" == $wp_query->get("post_type") || 
+						"product_cat" == $wp_query->get("taxonomy") || 
+						"product_tag" == $wp_query->get("taxonomy")))
+							return $sidebars;
 
 					$sidebars[] = is_singular() ? "woocommerce_product" : "woocommerce_catalog";
 					

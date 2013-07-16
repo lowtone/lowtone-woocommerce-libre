@@ -8,7 +8,7 @@
 	
 	<!-- Products -->
 	
-	<xsl:template match="//query[query_vars/post_type = 'product']/posts">
+	<xsl:template match="//query[query_vars/post_type = 'product' or query_vars/taxonomy = 'product_cat' or query_vars/taxonomy = 'product_tag']/posts">
 		<xsl:variable name="hasPosts" select="boolean(count(post))" />
 		<xsl:variable name="single" select="boolean(//query/@single)" />
 
@@ -17,6 +17,8 @@
 
 			<xsl:if test="not($single)">
 				<xsl:apply-templates select="wc:woocommerce/page_title" />
+
+				<xsl:value-of select="wc:woocommerce/actions/archive_description" disable-output-escaping="yes" />
 			</xsl:if>
 
 			<xsl:choose>
