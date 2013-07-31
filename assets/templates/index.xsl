@@ -73,7 +73,7 @@
 	<!-- Page title -->
 
 	<xsl:template match="wc:woocommerce/page_title">
-		<h1 class="page-title"><xsl:value-of select="." /></h1>
+		<h1 class="page-title"><xsl:value-of select="." disable-output-escaping="yes" /></h1>
 	</xsl:template>
 
 

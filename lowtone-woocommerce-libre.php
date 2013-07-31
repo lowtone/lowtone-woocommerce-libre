@@ -42,6 +42,10 @@ namespace lowtone\woocommerce\libre {
 					if (!checkWooCommerce())
 						return;
 
+					global $woocommerce;
+
+					add_action("wp_head", array($woocommerce, "init_checkout"), 9999);
+
 					// Config
 
 					if (!defined("LOWTONE_WOOCOMMERCE_LIBRE_APPEND_TEMPLATE"))
